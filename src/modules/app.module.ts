@@ -31,13 +31,13 @@ import { AuthController } from 'src/controllers/auth.controller';
         ttl: 6000,
         store: await redisStore({
           socket: {
-            host: configService.get('REDISHOST'),
-            port: configService.get('REDISPORT'),
-            passphrase: configService.get('REDISPASSWORD'),  
+            host: configService.getOrThrow('REDISHOST') || process.env.REDISHOST,
+            port: configService.getOrThrow('REDISPORT'),  
+            passphrase: configService.getOrThrow('REDISPASSWORD'),  
             
           },
-          username: configService.get('REDISUSER'),
-          password: configService.get('REDISPASSWORD'), 
+          username: configService.getOrThrow('REDISUSER'),
+          password: configService.getOrThrow('REDISPASSWORD'), 
         }),
       }),
       inject: [ConfigService]
