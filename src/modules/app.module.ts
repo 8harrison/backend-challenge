@@ -27,13 +27,17 @@ import { AuthController } from 'src/controllers/auth.controller';
     JwtModule.register({}),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService) => ({ 
         ttl: 6000,
         store: await redisStore({
           socket: {
-            host: 'localhost',
+            host: configService.get('REDISHOST'),
             port: configService.get('REDISPORT'),
+            passphrase: configService.get('REDISPASSWORD'),  
+            
           },
+          username: configService.get('REDISUSER'),
+          password: configService.get('REDISPASSWORD'), 
         }),
       }),
       inject: [ConfigService]
