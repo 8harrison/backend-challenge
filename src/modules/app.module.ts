@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../database/database.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FilmsModule } from './films.module';
 import { redisStore } from 'cache-manager-redis-yet';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -27,15 +27,16 @@ import { AuthController } from 'src/controllers/auth.controller';
     JwtModule.register({}),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async () => ({
+      useFactory: async (configService: ConfigService) => ({
         ttl: 6000,
         store: await redisStore({
           socket: {
             host: 'localhost',
-            port: 6379,
+            port: configService.get('REDISPORT'),
           },
         }),
       }),
+      inject: [ConfigService]
     }),
   ],
   controllers: [FilmsController, AuthController],
