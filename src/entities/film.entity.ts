@@ -15,11 +15,11 @@ export class Film extends AbstractEntity<Film> {
   @ApiProperty()
   releaseYear: number;
 
-  @Column({ nullable: true })
+  @Column()
   @ApiProperty()
   description: string;
 
-  @Column({ nullable: true })
+  @Column()
   @ApiProperty({ description: 'A duração do filme em minutos' })
   duration: number;
 
