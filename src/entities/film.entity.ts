@@ -18,7 +18,11 @@ export class Film extends AbstractEntity<Film> {
   @Column({ nullable: true })
   @ApiProperty()
   description: string;
-  
+
+  @Column({ nullable: true })
+  @ApiProperty({ description: 'A duração do filme em minutos' })
+  duration: number;
+
   @ManyToMany(() => Genre, { cascade: true })
   @JoinTable()
   @ApiProperty()
