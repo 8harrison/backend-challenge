@@ -63,8 +63,8 @@ export class FilmsService {
     film.releaseYear = updateFilmDto.releaseYear;
     film.directors = await Promise.all(directors);
     film.actors = await Promise.all(actors);
-
-    //this.filmsRepository.merge(film, updateFilmDto)
+    film.description = updateFilmDto.description;
+    film.duration = updateFilmDto.duration;
 
     return await this.filmsRepository.save(film);
   }

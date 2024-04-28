@@ -27,20 +27,20 @@ import { AuthController } from 'src/controllers/auth.controller';
     JwtModule.register({}),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async (configService: ConfigService) => ({ 
+      useFactory: async (configService: ConfigService) => ({
         ttl: 6000,
         store: await redisStore({
           socket: {
-            host: configService.getOrThrow('REDISHOST') || process.env.REDISHOST,
-            port: configService.getOrThrow('REDISPORT'),  
-            passphrase: configService.getOrThrow('REDISPASSWORD'),  
-            
+            host:
+              configService.getOrThrow('REDISHOST') || process.env.REDISHOST,
+            port: configService.getOrThrow('REDISPORT'),
+            passphrase: configService.getOrThrow('REDISPASSWORD'),
           },
           username: configService.getOrThrow('REDISUSER'),
-          password: configService.getOrThrow('REDISPASSWORD'), 
+          password: configService.getOrThrow('REDISPASSWORD'),
         }),
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
   ],
   controllers: [FilmsController, AuthController],

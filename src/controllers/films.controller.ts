@@ -15,8 +15,7 @@ import { CreateFilmDto } from '../dto/create-film.dto';
 import { UpdateFilmDto } from '../dto/update-film.dto';
 import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiOkResponse, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger';
-import { film } from './swagge.example';
+import { ApiBody, ApiOkResponse, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Film } from 'src/entities/film.entity';
 import { ApiPaginatedResponse, FilmDto, Response } from './customDecorator';
 
@@ -29,8 +28,8 @@ export class FilmsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  @ApiResponse({status: 201, description: 'Cria um filme', type: Film})
-  @ApiBody({ type: CreateFilmDto})
+  @ApiResponse({ status: 201, description: 'Cria um filme', type: Film })
+  @ApiBody({ type: CreateFilmDto })
   async create(@Body() createFilmDto: CreateFilmDto) {
     return this.filmsService.create(createFilmDto);
   }
@@ -44,7 +43,7 @@ export class FilmsController {
 
   @Get(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiParam({ name: 'id', type: 'string', example: '1'})
+  @ApiParam({ name: 'id', type: 'string', example: '1' })
   @ApiOkResponse({ type: Film })
   async findOne(@Param('id') id: string) {
     const cacheData = await this.cacheManager.get(id);
@@ -62,20 +61,22 @@ export class FilmsController {
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiParam({name: 'id', type: 'string', example: '1'})
-  @ApiOkResponse({type: Film})
-  @ApiBody({type: CreateFilmDto})
+  @ApiParam({ name: 'id', type: 'string', example: '1' })
+  @ApiOkResponse({ type: Film })
+  @ApiBody({ type: CreateFilmDto })
   async update(@Param('id') id: string, @Body() updateFilmDto: UpdateFilmDto) {
-    return this.filmsService.update(+id, updateFilmDto);
+    const updatedFilm = await this.filmsService.update(+id, updateFilmDto);
+    await this.cacheManager.set(id, updatedFilm);
+    return updatedFilm;
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ApiParam({name: 'id', type: 'string', example: '1'})
-  @ApiOkResponse({type: Response})
+  @ApiParam({ name: 'id', type: 'string', example: '1' })
+  @ApiOkResponse({ type: Response })
   async remove(@Param('id') id: string) {
     const film = await this.filmsService.findOne(+id);
-     this.filmsService.remove(+id);
-     return {message: `Filme ${film.name} de ID ${id} excluído com sucesso`}
+    this.filmsService.remove(+id);
+    return { message: `Filme ${film.name} de ID ${id} excluído com sucesso` };
   }
 }
